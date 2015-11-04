@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/jquery.formstyler.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Matrix Multiply Application</title>
+	<script src='./js/jquery.js'></script>
+	<script src='./js/jquery.formstyler.js'></script>
+	<script>
+		(function($) {
+		$(function() {
+			$('input:radio').styler();
+		});
+		})(jQuery);
+	</script>
+</head>
+<body ng-app="matrix">
+
+<div class="content" ng-controller="buttons">
+	<!--Основной слой начало-->
+		<!--Левый слой начало-->
+		<div class="row row__col--13 row--gray">
+		<div>
+				<button ng-click="doit()" class="greenbtn">
+					<span class="button__text">Multiply matrixes</span>
+				</button>
+			</div>
+			<div>
+				<button class="button iconic iconic-clearmatrix" ng-click="clearMatrix()">Clear all</button>
+			</div>
+			<div>
+				<button ng-click="changeMatrix()" class="button iconic iconic-changematrix">Change places</button>
+			</div>
+			<!--Радиогруппы начало-->
+			<div class="radioGroup">
+				<form>
+				<input type="radio" name="matrixSelect" id="matrixA" value="matrA" checked>
+				<label for="matrixA">Matrix A</label>
+				<input type="radio" name="matrixSelect" id="matrixB" value="matrB" ><label for="matrixB">Matrix B</label>
+				</form>
+			</div>
+			<!--Радиогруппы конец-->
+			<div>
+			<!--Управляющий слой начало-->
+			<!--Управляющий строками слой начало-->
+			<div class="buttonsGroup">
+				<div><button class="button iconic iconic-add" ng-click="addButton(1)">
+					Add
+				</button></div>
+				<div><button class="button iconic iconic-remove" ng-click="killRow()">
+					Delete
+				</button></div>
+				<div class="inputpodpis">row</div>
+				<br class="clear" />
+			</div>
+			<!--Управляющий строками слой конец-->
+			<!--Управляющий столбцами слой начало-->
+			<div class="buttonsGroup">
+				<div><button class="button iconic iconic-add" ng-click="addButton(2)">
+					Add
+				</button></div>
+				<div><button class="button iconic iconic-remove" ng-click="killLine()">
+					Delete
+				</button></div>
+				<div class="inputpodpis">line</div>
+				<br class="clear" />
+			</div>
+			<!--Управляющий столбцами слой конец-->
+			<!--Управляющий слой конец-->
+			</div>
+			<div class="errorMessage">{{data.errorMessage}}</div>
+		</div>
+		<!--Левый слой конец-->
+		<!--Правый слой начало-->
+		<div class="row row__col--23">
+			<table cellpadding="20">
+			<tr>
+			<td>
+				<!--Результирующий слой начало-->
+				<div class="result table">
+				<!--Хвосты начало-->
+				<div class="left-top"></div>
+				<div class="right-top"></div>
+				<div class="left-bottom"></div>
+				<div class="right-bottom"></div>
+				<!--Хвосты конец-->
+				<!--Вывод массива начало-->
+				<div ng-repeat="(keyFirst, valFirst) in data.arrs.result track by $index" class="table-row">
+					<ul  class="list table-cell">
+						<li ng-repeat="(key,val) in valFirst track by $index" class="tcell">
+							<input class="inputs" ng-model="valFirst[key]" type="text" placeholder="c{{keyFirst+1}},{{key+1}}" readonly="readonly">
+						</li>
+					</ul>
+					
+				</div>
+				<!--Вывод массива конец-->
+				</div>
+				
+			<!--Результирующий слой конец-->
+			</td>
+			<td>	
+				<div class="matrixBlock">
+				<!--Вывод первой матрицы и подписи начало-->
+				<div class="matrixA table">
+				<!--Хвосты начало-->
+				<div class="left-top"></div>
+				<div class="right-top"></div>
+				<div class="left-bottom"></div>
+				<div class="right-bottom"></div>
+				<!--Хвосты конец-->
+				<!--Вывод массива начало-->
+				<div  ng-repeat="(keyFirst, valFirst) in data.arrs.matrixA track by $index"  class="table-row">
+					<ul  class="list table-cell">
+						<li ng-repeat="(key,val) in valFirst track by $index" class="tcell">
+							<input class="inputs" type="text" placeholder="a{{keyFirst+1}},{{key+1}}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"  ng-model="valFirst[key]" value="{{valFirst[key]}}">
+						</li>
+					</ul>
+				</div>
+				<!--Вывод массива конец-->
+				<br class="clear">	
+			</div>
+			<div class="podpis podpis--A">A</div>
+			<!--Вывод первой матрицы и подписи конец-->
+			</div>	
+			</td>	
+			</tr>
+			<tr>
+				<td>
+				<div class="matrixB table">
+				<!--Вывод второй матрицы и подписи начало-->
+				<!--Хвосты начало-->
+				<div class="left-top"></div>
+				<div class="right-top"></div>
+				<div class="left-bottom"></div>
+				<div class="right-bottom"></div>
+				<!--Хвосты конец-->
+				<!--Вывод массива начало-->
+				<div ng-repeat="(keyFirst, valFirst) in data.arrs.matrixB track by $index"  class="table-row">
+					<ul class="list table-cell">
+						<li ng-repeat="(key,val) in valFirst track by $index" class="tcell">
+							<input class="inputs" placeholder="b{{keyFirst+1}},{{key+1}}" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"   ng-model="valFirst[key]" value="{{valFirst[key]}}">
+						</li>
+					</ul>
+				</div>
+				<!--Вывод массива конец-->
+				
+				</div>
+				<br class="clear">
+				<div class="podpis podpis--B">B</div>
+				<!--Вывод второй матрицы и подписи начало-->	
+				</td>	
+			</tr>
+			</table>
+		</div>
+		<!--Правый слой конец-->
+	<!--Основной слой конец-->
+	</div>
+
+	<script src='./js/angular.min.js'></script>
+	<script src='./js/app.js'></script>
+</body>
+</html>
